@@ -2,6 +2,41 @@ import time
 import sys
 from tkinter import *
 
+def setup_first_screen():
+	#clear previous buttons (if reverting)
+	global timer_paused
+	timer_paused = True
+
+	previous_screen_button.place_forget()
+
+	interval_type_lbl.pack_forget()
+	interval_countdown_lbl.pack_forget()
+
+	start_button.place_forget()
+	pause_button.place_forget()
+	reset_button.place_forget()
+
+	elapsed_time_lbl.pack_forget()
+
+	root.config(bg="white")
+
+	active_time.set("00")
+	recover_time.set("00")
+
+	active_time_entry.config(textvariable=active_time)
+	recover_time_entry.config(textvariable=recover_time)
+
+	active_lbl.place(x=100,y=125)
+	recover_lbl.place(x=425,y=125)
+
+	active_time_entry.place(x=175,y=200)
+	recover_time_entry.place(x=500,y=200)
+
+	setup_btn.place(x=220, y=500)
+
+	root.update()
+
+
 def setup_timer():
 	"""disappears the widgets from the first screen and places all the new widgets"""
 	active_lbl.place_forget()
@@ -20,12 +55,15 @@ def setup_timer():
 	# interval_type_lbl.place(x=340, y=100)
 	# interval_countdown_lbl.place(x=380, y=400)
 	# elapsed_time_lbl.place(x=340, y=750)
+	previous_screen_button.place(x=10,y=10)
+
 	interval_type_lbl.pack(pady=20)
 	interval_countdown_lbl.pack(pady=50)
 
 	start_button.place(x=100, y=600)
 	pause_button.place(x=325, y=600)
 	reset_button.place(x=580, y=600)
+
 
 	elapsed_time_lbl.pack(side=BOTTOM)
 
@@ -124,16 +162,6 @@ setup_btn = Button(root, text='Set Up Timer', bd='5',
 			 command=setup_timer,
 			 font=("Arial", 60))
 
-# placing the widgets
-active_lbl.place(x=100,y=125)
-recover_lbl.place(x=425,y=125)
-
-active_time_entry.place(x=175,y=200)
-recover_time_entry.place(x=500,y=200)
-
-setup_btn.place(x=220, y=500)
-
-
 ####Establishing the widgets for placement on the timer screen
 interval_type_lbl = Label(root, text="",
 					  justify='center',
@@ -156,7 +184,15 @@ reset_button = Button(root, text='reset', bd='5',
 					  command=reset_timer,
 					  font=("Arial", 50))
 
+previous_screen_button = Button(root, text='previous screen', bd='5',
+                                command=setup_first_screen,
+                                font=("Arial", 20))
+
+
+
 # infinite loop which is required to
 # run tkinter program infinitely
 # until an interrupt occurs
+setup_first_screen()
 root.mainloop()
+
