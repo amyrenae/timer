@@ -40,6 +40,9 @@ recover_lbl = Label(root, text="recover time", justify='center', font=("Arial", 
 recover_lbl.place(x=180,y=5)
 
 
+def setup_timer():
+	pass
+
 def update_timer(seconds_passed, interval, interval_time):
 
 	phase = {'active': {'title': 'go!',
