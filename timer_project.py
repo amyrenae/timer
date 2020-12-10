@@ -2,11 +2,12 @@ import time
 import sys
 from tkinter import *
 
-def setup_first_screen():
+def setup_input_screen():
 	#clear previous buttons (if reverting)
 	global timer_paused
 	timer_paused = True
 
+	#disappear all timer screen widgets
 	previous_screen_button.place_forget()
 
 	interval_type_lbl.pack_forget()
@@ -17,6 +18,7 @@ def setup_first_screen():
 	reset_button.place_forget()
 
 	elapsed_time_lbl.pack_forget()
+
 
 	root.config(bg="white")
 
@@ -37,7 +39,7 @@ def setup_first_screen():
 	root.update()
 
 
-def setup_timer():
+def setup_timer_screen():
 	"""disappears the widgets from the first screen and places all the new widgets"""
 	active_lbl.place_forget()
 	recover_lbl.place_forget()
@@ -52,16 +54,13 @@ def setup_timer():
 	interval_countdown_lbl.config(text="0", bg="white")
 	elapsed_time_lbl.config(text="00:00", bg="white")
 
-	# interval_type_lbl.place(x=340, y=100)
-	# interval_countdown_lbl.place(x=380, y=400)
-	# elapsed_time_lbl.place(x=340, y=750)
 	previous_screen_button.place(x=10,y=10)
 
 	interval_type_lbl.pack(pady=20)
 	interval_countdown_lbl.pack(pady=50)
 
-	start_button.place(x=100, y=600)
-	pause_button.place(x=325, y=600)
+	pause_button.place(x=100, y=600)
+	start_button.place(x=325, y=600)
 	reset_button.place(x=580, y=600)
 
 
@@ -78,7 +77,7 @@ def start_timer(seconds_passed, interval, interval_time):
 
 
 def pause_timer(seconds_passed, interval, interval_time):
-	"""reconfigs the start button to the time durations at time of pause"""
+	"""pauses the timer and sets the start button to start where left off"""
 	global timer_paused
 	timer_paused = True
 	start_button.config(command=lambda: start_timer(seconds_passed, interval, interval_time))
@@ -86,8 +85,8 @@ def pause_timer(seconds_passed, interval, interval_time):
 
 
 def reset_timer():
-	"""reruns the setup function"""
-	setup_timer()
+	"""resets the timer screen"""
+	setup_timer_screen()
 	pause_timer(0, 'active', int(active_time_entry.get()))
 
 
@@ -109,7 +108,7 @@ def update_timer(seconds_passed, interval, interval_time):
 		interval_time = phase[interval]['interval_duration']
 
 
-	if seconds_passed < 120 and not timer_paused:
+	if seconds_passed < 480 and not timer_paused:
 	# 	# divmod(firstvalue = seconds_passed//60, secondvalue = seconds_passed%60)
 		mins,secs = divmod(seconds_passed,60)
 		display = "{minutes}:{seconds}".format(minutes="{:0>2}".format(mins),
@@ -159,7 +158,7 @@ recover_time_entry = Entry(root, width=2, font=("Arial",50,""),
 
 # button to establish the interval times and setup the timer screen
 setup_btn = Button(root, text='Set Up Timer', bd='5',
-			 command=setup_timer,
+			 command=setup_timer_screen,
 			 font=("Arial", 60))
 
 ####Establishing the widgets for placement on the timer screen
@@ -172,20 +171,20 @@ interval_countdown_lbl = Label(root, text="0", justify='center', font=("Arial", 
 elapsed_time_lbl = Label(root, text="00:00", justify='center', font=("Arial", 50))
 
 
-start_button = Button(root, text='start', bd='5',
+start_button = Button(root, text='start', bd='20',
 					  command= lambda: start_timer(0, 'active', int(active_time_entry.get())),
-					  font=("Arial", 50))
+					  font=("Arial", 70))
 
-pause_button = Button(root, text='pause', bd='5',
+pause_button = Button(root, text='pause', bd='7',
 					  command= lambda: pause_timer(0, 'active', int(active_time_entry.get())),
 					  font=("Arial", 50))
 
-reset_button = Button(root, text='reset', bd='5',
+reset_button = Button(root, text='reset', bd='7',
 					  command=reset_timer,
 					  font=("Arial", 50))
 
 previous_screen_button = Button(root, text='previous screen', bd='5',
-                                command=setup_first_screen,
+                                command=setup_input_screen,
                                 font=("Arial", 20))
 
 
@@ -193,6 +192,6 @@ previous_screen_button = Button(root, text='previous screen', bd='5',
 # infinite loop which is required to
 # run tkinter program infinitely
 # until an interrupt occurs
-setup_first_screen()
+setup_input_screen()
 root.mainloop()
 
