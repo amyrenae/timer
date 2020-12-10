@@ -9,14 +9,11 @@ def setup_input_screen():
 
 	#disappear all timer screen widgets
 	previous_screen_button.place_forget()
-
 	interval_type_lbl.pack_forget()
 	interval_countdown_lbl.pack_forget()
-
 	start_button.place_forget()
 	pause_button.place_forget()
 	reset_button.place_forget()
-
 	elapsed_time_lbl.pack_forget()
 
 
@@ -28,13 +25,13 @@ def setup_input_screen():
 	active_time_entry.config(textvariable=active_time)
 	recover_time_entry.config(textvariable=recover_time)
 
-	active_lbl.place(x=100,y=125)
-	recover_lbl.place(x=425,y=125)
+	active_lbl.place(x=100,y=225)
+	recover_lbl.place(x=425,y=225)
 
-	active_time_entry.place(x=175,y=200)
-	recover_time_entry.place(x=500,y=200)
+	active_time_entry.place(x=185,y=300)
+	recover_time_entry.place(x=535,y=300)
 
-	setup_btn.place(x=220, y=500)
+	setup_btn.pack(side=BOTTOM, pady=150)
 
 	root.update()
 
@@ -47,7 +44,7 @@ def setup_timer_screen():
 	active_time_entry.place_forget()
 	recover_time_entry.place_forget()
 
-	setup_btn.place_forget()
+	setup_btn.pack_forget()
 
 	root.config(bg="white")
 	interval_type_lbl.config(text="", bg="white")
@@ -60,9 +57,8 @@ def setup_timer_screen():
 	interval_countdown_lbl.pack(pady=50)
 
 	pause_button.place(x=100, y=600)
-	start_button.place(x=325, y=600)
-	reset_button.place(x=580, y=600)
-
+	start_button.place(x=325, y=587)
+	reset_button.place(x=555, y=600)
 
 	elapsed_time_lbl.pack(side=BOTTOM)
 
@@ -151,9 +147,9 @@ active_lbl = Label(root, text="active time", justify='center', font=("Arial", 50
 recover_lbl = Label(root, text="recover time", justify='center', font=("Arial", 50))
 
 #creating the entry boxes for the interval time spans
-active_time_entry = Entry(root, width=2, font=("Arial",50,""),
+active_time_entry = Entry(root, width=2, font=("Arial",75,""),
 						  textvariable=active_time, justify='center')
-recover_time_entry = Entry(root, width=2, font=("Arial",50,""),
+recover_time_entry = Entry(root, width=2, font=("Arial",75,""),
 						   textvariable=recover_time, justify='center')
 
 # button to establish the interval times and setup the timer screen
