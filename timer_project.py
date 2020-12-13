@@ -49,14 +49,17 @@ def setup_timer_screen():
 	root.config(bg="white")
 	interval_type_lbl.config(text="", bg="white")
 	interval_countdown_lbl.config(text="0", bg="white")
+
 	elapsed_time_lbl.config(text="00:00", bg="white")
 
-	start_button.config(command=lambda: start_timer(0, 'active', int(active_time_entry.get())))
+	start_button.config(command=lambda: start_timer(3, 0, 'active', int(active_time_entry.get())))
 
 	previous_screen_button.place(x=10,y=10)
 
 	interval_type_lbl.pack(pady=20)
 	interval_countdown_lbl.pack(pady=50)
+
+	delay_timer_cntdown_lbl.place(x=600, y=200)
 
 	pause_button.place(x=100, y=600)
 	start_button.place(x=325, y=587)
@@ -67,18 +70,27 @@ def setup_timer_screen():
 	root.update()
 
 
-def start_timer(seconds_passed, interval, interval_time):
+def start_timer(delay, seconds_passed, interval, interval_time):
 	"""sets timer_paused to False and runs update_timer function"""
 	global timer_paused
-	timer_paused = False
-	update_timer(seconds_passed, interval, interval_time)
+	# delay_timer(3),
+	if delay >= 1:
+		delay_timer_cntdown_lbl.place(x=600, y=200)
+		delay_timer_cntdown_lbl.config(text=delay)
+		root.update()
+		root.after(1000, start_timer, delay-1, seconds_passed, interval, interval_time)
+	else:
+		delay_timer_cntdown_lbl.place_forget()
+		root.update()
+		timer_paused = False
+		update_timer(seconds_passed, interval, interval_time)
 
 
 def pause_timer(seconds_passed, interval, interval_time):
 	"""pauses the timer and sets the start button to start where left off"""
 	global timer_paused
 	timer_paused = True
-	start_button.config(command=lambda: start_timer(seconds_passed, interval, interval_time))
+	start_button.config(command=lambda: start_timer(3, seconds_passed, interval, interval_time))
 	root.update()
 
 
@@ -86,6 +98,11 @@ def reset_timer():
 	"""resets the timer screen"""
 	setup_timer_screen()
 	pause_timer(0, 'active', int(active_time_entry.get()))
+
+
+def delay_timer(delay_seconds):
+	global timer_paused
+	timer_paused = True
 
 
 def update_timer(seconds_passed, interval, interval_time):
@@ -166,11 +183,14 @@ interval_type_lbl = Label(root, text="",
 
 interval_countdown_lbl = Label(root, text="0", justify='center', font=("Arial", 300))
 
+delay_timer_cntdown_lbl = Label(root, text="", justify='center', font=("Arial", 50))
+
+
 elapsed_time_lbl = Label(root, text="00:00", justify='center', font=("Arial", 50))
 
 
 start_button = Button(root, text='start', bd='20',
-					  command= lambda: start_timer(0, 'active', int(active_time_entry.get())),
+					  command= lambda: start_timer(3, 0, 'active', int(active_time_entry.get())),
 					  font=("Arial", 70))
 
 pause_button = Button(root, text='pause', bd='7',
