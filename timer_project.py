@@ -51,6 +51,8 @@ def setup_timer_screen():
 	interval_countdown_lbl.config(text="0", bg="white")
 	elapsed_time_lbl.config(text="00:00", bg="white")
 
+	start_button.config(command=lambda: start_timer(0, 'active', int(active_time_entry.get())))
+
 	previous_screen_button.place(x=10,y=10)
 
 	interval_type_lbl.pack(pady=20)
