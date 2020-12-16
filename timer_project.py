@@ -150,7 +150,7 @@ root.geometry("800x800")
 root.title("Exercise Timer")
 
 
-#### INPUT SCREEN WIDGETS ####
+##### INPUT SCREEN WIDGETS #####
 # Declaration of variables
 active_time = StringVar()
 recovery_time = StringVar()
