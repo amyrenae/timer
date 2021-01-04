@@ -23,11 +23,11 @@ def setup_input_screen():
     active_time_entry.config(textvariable=active_time)
     recovery_time_entry.config(textvariable=recovery_time)
 
-    active_lbl.place(x=100, y=225)
-    recovery_lbl.place(x=425, y=225)
+    active_lbl.place(x=300, y=225)
+    recovery_lbl.place(x=650, y=225)
 
-    active_time_entry.place(x=185, y=300)
-    recovery_time_entry.place(x=535, y=300)
+    active_time_entry.place(x=385, y=300)
+    recovery_time_entry.place(x=740, y=300)
 
     setup_btn.pack(side=BOTTOM, pady=150)
 
@@ -60,11 +60,11 @@ def setup_timer_screen():
     previous_screen_button.place(x=10, y=10)
 
     interval_type_lbl.pack(pady=20)
-    interval_countdown_lbl.pack(pady=50)
+    interval_countdown_lbl.pack(pady=25)
 
-    pause_button.place(x=100, y=600)
-    start_button.place(x=325, y=587)
-    reset_button.place(x=555, y=600)
+    pause_button.place(x=299, y=600)#100
+    start_button.place(x=524, y=587)#325
+    reset_button.place(x=754, y=600)#555
 
     elapsed_time_lbl.pack(side=BOTTOM)
 
@@ -77,7 +77,7 @@ def start_timer(delay, seconds_passed, interval, interval_time):
 
     if delay >= 1:
         delay_timer_cntdown_lbl.config(text=delay)
-        delay_timer_cntdown_lbl.place(x=600, y=200)
+        delay_timer_cntdown_lbl.place(x=750, y=200)
         root.update()
         root.after(1000, start_timer, delay-1,
                    seconds_passed, interval, interval_time)
@@ -146,7 +146,7 @@ timer_paused = False
 delay_duration = 5
 # creating Tk window
 root = Tk()
-root.geometry("800x800")
+root.geometry("1200x800")
 root.title("Exercise Timer")
 
 
@@ -180,7 +180,7 @@ interval_type_lbl = Label(root, text="",
                           justify='center',
                           font=("Arial", 100))
 # countdown displays
-interval_countdown_lbl = Label(root, text="0", justify='center', font=("Arial", 300))
+interval_countdown_lbl = Label(root, text="0", justify='center', font=("Arial", 350))
 delay_timer_cntdown_lbl = Label(root, text="", justify='center', font=("Arial", 50))
 elapsed_time_lbl = Label(root, text="00:00", justify='center', font=("Arial", 50))
 
@@ -190,14 +190,17 @@ start_button = Button(root, text='start', bd='20',
                                                   0,
                                                   'active',
                                                   int(active_time_entry.get())),
-                      font=("Arial", 70))
+                      font=("Arial", 70),
+                      bg='grey')
 
 pause_button = Button(root, text='pause', bd='7',
                       command=lambda: pause_timer(0, 'active', int(active_time_entry.get())),
-                      font=("Arial", 50))
+                      font=("Arial", 50),
+                      bg='grey')
 
 reset_button = Button(root, text='reset', bd='7', command=reset_timer,
-                      font=("Arial", 50))
+                      font=("Arial", 50),
+                      bg='grey')
 
 previous_screen_button = Button(root, text='previous screen', bd='5',
                                 command=setup_input_screen,
