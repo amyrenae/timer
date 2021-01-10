@@ -5,7 +5,7 @@ def setup_input_screen():
     global timer_paused
     timer_paused = True
 
-    # disappear all timer screen widgets
+    # disappear all countdowntimer screen widgets
     previous_screen_button.place_forget()
     interval_type_lbl.pack_forget()
     interval_countdown_lbl.pack_forget()
@@ -75,6 +75,7 @@ def start_timer(delay, seconds_passed, interval, interval_time):
     """sets timer_paused to False and runs update_timer function"""
     global timer_paused
 
+    #loops through the amount time left on the delay display
     if delay >= 1:
         delay_timer_cntdown_lbl.config(text=delay)
         delay_timer_cntdown_lbl.place(x=750, y=200)
@@ -112,7 +113,8 @@ def update_timer(seconds_passed, interval, interval_time):
     phase = {'active': {'title': 'go!',
                         'interval_duration': int(active_time_entry.get()),
                         'color': 'green'},
-             'recovery': {'title': 'rest', 'interval_duration': int(recovery_time_entry.get()),
+             'recovery': {'title': 'rest',
+                          'interval_duration': int(recovery_time_entry.get()),
                           'color': 'pink'}}
     #switches to the other interval at the end of the interval duration
     if interval_time < 1:
@@ -143,7 +145,7 @@ def update_timer(seconds_passed, interval, interval_time):
 
 
 timer_paused = False
-delay_duration = 5
+delay_duration = 10
 # creating Tk window
 root = Tk()
 root.geometry("1200x800")
@@ -190,8 +192,7 @@ start_button = Button(root, text='start', bd='20',
                                                   0,
                                                   'active',
                                                   int(active_time_entry.get())),
-                      font=("Arial", 70),
-                      bg='grey')
+                      font=("Arial", 70), bg='grey')
 
 pause_button = Button(root, text='pause', bd='7',
                       command=lambda: pause_timer(0, 'active', int(active_time_entry.get())),
