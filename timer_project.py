@@ -19,15 +19,19 @@ def setup_input_screen():
 
     active_time.set("00")
     recovery_time.set("00")
+    delay_start.set("00")
 
     active_time_entry.config(textvariable=active_time)
     recovery_time_entry.config(textvariable=recovery_time)
+    delay_start_entry.config(textvariable=recovery_time)
 
     active_lbl.place(x=300, y=225)
     recovery_lbl.place(x=650, y=225)
+    delay_lbl.place(x=550, y=75)
 
     active_time_entry.place(x=385, y=300)
     recovery_time_entry.place(x=740, y=300)
+    delay_start_entry.place(x=550, y=150)
 
     setup_btn.pack(side=BOTTOM, pady=150)
 
@@ -39,9 +43,11 @@ def setup_timer_screen():
     # disappear previous screens widgets
     active_lbl.place_forget()
     recovery_lbl.place_forget()
+    delay_lbl.place_forget()
 
     active_time_entry.place_forget()
     recovery_time_entry.place_forget()
+    delay_start_entry.place_forget()
 
     setup_btn.pack_forget()
 
@@ -52,7 +58,7 @@ def setup_timer_screen():
     elapsed_time_lbl.config(text="00:00", bg="white")
 
     active_input = int(active_time_entry.get())
-    start_button.config(command=lambda: start_timer(delay_duration,
+    start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
                                                     0,
                                                     'active',
                                                     active_input))
@@ -93,7 +99,7 @@ def pause_timer(seconds_passed, interval, interval_time):
     """pauses the timer and sets the start button to start where left off"""
     global timer_paused
     timer_paused = True
-    start_button.config(command=lambda: start_timer(delay_duration,
+    start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
                                                     seconds_passed,
                                                     interval,
                                                     interval_time))
@@ -145,7 +151,7 @@ def update_timer(seconds_passed, interval, interval_time):
 
 
 timer_paused = False
-delay_duration = 10
+# delay_duration = 10
 # creating Tk window
 root = Tk()
 root.geometry("1200x800")
@@ -156,20 +162,25 @@ root.title("Exercise Timer")
 # Declaration of variables
 active_time = StringVar()
 recovery_time = StringVar()
+delay_start = StringVar()
 
 # setting the default value as 0
 active_time.set("00")
 recovery_time.set("00")
+delay_start.set("00")
 
 # entry box labels
 active_lbl = Label(root, text="active time", justify='center', font=("Arial", 50))
 recovery_lbl = Label(root, text="recovery time", justify='center', font=("Arial", 50))
+delay_lbl = Label(root, text="delay start", justify='center', font=("Arial", 50))
 
 # interval time entry boxes
 active_time_entry = Entry(root, width=2, font=("Arial", 75, ""),
                           textvariable=active_time, justify='center')
 recovery_time_entry = Entry(root, width=2, font=("Arial", 75, ""),
                             textvariable=recovery_time, justify='center')
+delay_start_entry = Entry(root, width=2, font=("Arial", 75, ""),
+                            textvariable=delay_start, justify='center')
 
 # button to set the interval times and changes to/sets up the timer screen
 setup_btn = Button(root, text='Set Up Timer', bd='5',
@@ -188,7 +199,7 @@ elapsed_time_lbl = Label(root, text="00:00", justify='center', font=("Arial", 50
 
 # buttons
 start_button = Button(root, text='start', bd='20',
-                      command=lambda: start_timer(delay_duration,
+                      command=lambda: start_timer(int(delay_start_entry.get()),
                                                   0,
                                                   'active',
                                                   int(active_time_entry.get())),
