@@ -23,7 +23,7 @@ def setup_input_screen():
 
     active_time_entry.config(textvariable=active_time)
     recovery_time_entry.config(textvariable=recovery_time)
-    delay_start_entry.config(textvariable=recovery_time)
+    delay_start_entry.config(textvariable=delay_start)
 
     active_lbl.place(x=300, y=225)
     recovery_lbl.place(x=650, y=225)
