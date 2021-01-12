@@ -19,19 +19,26 @@ def setup_input_screen():
 
     active_time.set("00")
     recovery_time.set("00")
-    delay_start.set("00")
+    delay_start.set("10")
 
     active_time_entry.config(textvariable=active_time)
     recovery_time_entry.config(textvariable=recovery_time)
     delay_start_entry.config(textvariable=delay_start)
 
-    active_lbl.place(x=300, y=225)
-    recovery_lbl.place(x=650, y=225)
-    delay_lbl.place(x=550, y=75)
+    # delay_lbl.place(x=475, y=65)
+    # active_lbl.place(x=300, y=225)
+    # recovery_lbl.place(x=650, y=225)
 
-    active_time_entry.place(x=385, y=300)
-    recovery_time_entry.place(x=740, y=300)
-    delay_start_entry.place(x=550, y=150)
+    # delay_start_entry.place(x=550, y=140)
+    # active_time_entry.place(x=385, y=300)
+    # recovery_time_entry.place(x=740, y=300)
+
+    active_lbl.place(x=395, y=65)
+    active_time_entry.place(x=715, y=50)
+    recovery_lbl.place(x=395, y=232)
+    recovery_time_entry.place(x=715, y=217)
+    delay_lbl.place(x=395, y=400)
+    delay_start_entry.place(x=715, y=385)
 
     setup_btn.pack(side=BOTTOM, pady=150)
 
@@ -41,13 +48,14 @@ def setup_input_screen():
 def setup_timer_screen():
     """sets up timer screen"""
     # disappear previous screens widgets
+    delay_lbl.place_forget()
     active_lbl.place_forget()
     recovery_lbl.place_forget()
-    delay_lbl.place_forget()
 
+    delay_start_entry.place_forget()
     active_time_entry.place_forget()
     recovery_time_entry.place_forget()
-    delay_start_entry.place_forget()
+
 
     setup_btn.pack_forget()
 
@@ -165,22 +173,22 @@ recovery_time = StringVar()
 delay_start = StringVar()
 
 # setting the default value as 0
+delay_start.set("10")
 active_time.set("00")
 recovery_time.set("00")
-delay_start.set("00")
 
 # entry box labels
-active_lbl = Label(root, text="active time", justify='center', font=("Arial", 50))
-recovery_lbl = Label(root, text="recovery time", justify='center', font=("Arial", 50))
 delay_lbl = Label(root, text="delay start", justify='center', font=("Arial", 50))
+active_lbl = Label(root, text="active", justify='center', font=("Arial", 50))
+recovery_lbl = Label(root, text="recovery", justify='center', font=("Arial", 50))
 
 # interval time entry boxes
+delay_start_entry = Entry(root, width=2, font=("Arial", 75, ""),
+                            textvariable=delay_start, justify='center')
 active_time_entry = Entry(root, width=2, font=("Arial", 75, ""),
                           textvariable=active_time, justify='center')
 recovery_time_entry = Entry(root, width=2, font=("Arial", 75, ""),
                             textvariable=recovery_time, justify='center')
-delay_start_entry = Entry(root, width=2, font=("Arial", 75, ""),
-                            textvariable=delay_start, justify='center')
 
 # button to set the interval times and changes to/sets up the timer screen
 setup_btn = Button(root, text='Set Up Timer', bd='5',
