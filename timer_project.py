@@ -33,9 +33,9 @@ def setup_input_screen():
     # active_time_entry.place(x=385, y=300)
     # recovery_time_entry.place(x=740, y=300)
 
-    active_lbl.place(x=505, y=195)
+    active_lbl.place(x=500, y=195)
     active_time_entry.place(x=675, y=185)
-    recovery_lbl.place(x=435, y=330)
+    recovery_lbl.place(x=425, y=330)
     recovery_time_entry.place(x=675, y=320)
     delay_lbl.place(x=525, y=467)
     delay_start_entry.place(x=675, y=460)
