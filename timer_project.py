@@ -228,5 +228,7 @@ previous_screen_button = Button(root, text='previous screen', bd='5',
 # infinite loop which is required to
 # run tkinter program infinitely
 # until an interrupt occurs
+
+
 setup_input_screen()
 root.mainloop()
