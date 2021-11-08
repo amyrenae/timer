@@ -21,34 +21,51 @@ def setup_input_screen():
     timer_paused = True
 
     # disappear all countdowntimer screen widgets
-    # previous_screen_button.place_forget()
-    previous_screen_button.grid_forget()
-    interval_type_lbl.pack_forget()
-    interval_countdown_lbl.pack_forget()
-    delay_timer_cntdown_lbl.place_forget()
-    start_button.place_forget()
-    pause_button.place_forget()
-    reset_button.place_forget()
-    elapsed_time_lbl.pack_forget()
+    # previous_screen_btn.place_forget()
+    previous_screen_btn.grid_forget()
+    interval_type_lbl.grid_forget()
+    interval_countdown_lbl.grid_forget()
+    delay_timer_cntdown_lbl.grid_forget()
+    start_btn.grid_forget()
+    pause_btn.grid_forget()
+    reset_btn.grid_forget()
+    elapsed_time_lbl.grid_forget()
 
     root.config(bg="white")
 
     active_time.set("00")
-    recovery_time.set("00")
+    recover_time.set("00")
     delay_start.set("10")
 
-    active_time_entry.config(textvariable=active_time)
-    recovery_time_entry.config(textvariable=recovery_time)
-    delay_start_entry.config(textvariable=delay_start)
+    active_time_ent.config(textvariable=active_time)
+    recover_time_ent.config(textvariable=recover_time)
+    delay_start_ent.config(textvariable=delay_start)
 
-    active_lbl.place(x=500, y=195)
-    active_time_entry.place(x=675, y=185)
-    recovery_lbl.place(x=425, y=330)
-    recovery_time_entry.place(x=675, y=320)
-    delay_lbl.place(x=525, y=467)
-    delay_start_entry.place(x=675, y=460)
+    root.columnconfigure(0, weight=1, minsize=95)
+    root.columnconfigure(1, weight=1, minsize=95)
+    root.columnconfigure(2, weight=1, minsize=95)
+    root.columnconfigure(3, weight=1, minsize=95)
 
-    setup_btn.pack(side=BOTTOM, pady=150)
+    root.rowconfigure(0, weight=1, minsize=30)
+    root.rowconfigure(1, weight=1, minsize=80)
+    root.rowconfigure(2, weight=1, minsize=110)
+
+    active_time_ent.grid(row=1, column=2, sticky="nw")
+    active_lbl.grid(row=1, column=1, sticky="ne", pady=10)
+    recover_time_ent.grid(row=1, column=2, sticky="w")
+    recover_lbl.grid(row=1, column=1, sticky="e")
+    delay_start_ent.grid(row=1, column=2, sticky="sw")
+    delay_lbl.grid(row=1, column=1, sticky="se", pady=5)
+    setup_btn.grid(row=2, column=1, columnspan=2)
+
+    # active_lbl.place(x=500, y=195)
+    # active_time_ent.place(x=675, y=185)
+    # recover_lbl.place(x=425, y=330)
+    # recover_time_ent.place(x=675, y=320)
+    # delay_lbl.place(x=525, y=467)
+    # delay_start_ent.place(x=675, y=460)
+
+    # setup_btn.pack(side=BOTTOM, pady=150)
 
     root.update()
 
@@ -56,15 +73,18 @@ def setup_input_screen():
 def setup_timer_screen():
     """sets up timer screen"""
     # disappear previous screens widgets
-    delay_lbl.place_forget()
-    active_lbl.place_forget()
-    recovery_lbl.place_forget()
 
-    delay_start_entry.place_forget()
-    active_time_entry.place_forget()
-    recovery_time_entry.place_forget()
 
-    setup_btn.pack_forget()
+    delay_lbl.grid_forget()
+    active_lbl.grid_forget()
+    recover_lbl.grid_forget()
+
+    delay_start_ent.grid_forget()
+    active_time_ent.grid_forget()
+    recover_time_ent.grid_forget()
+
+    setup_btn.grid_forget()
+
 
     # reset configs to white/basic text
     root.config(bg="white")
@@ -73,46 +93,48 @@ def setup_timer_screen():
     elapsed_time_lbl.config(text="00:00", bg="white")
 
     phases = {'active': {'title': 'go!',
-                    'interval_duration': int(active_time_entry.get()),
-                    'color': 'green',
-                    'hex': '00FF00'},
-         'recovery': {'title': 'rest',
-                      'interval_duration': int(recovery_time_entry.get()),
-                      'color': 'pink',
-                      'hex': 'FF0000'}}
+                         'interval_duration': int(active_time_ent.get()),
+                         'color': 'green',
+                         'hex': '00FF00'},
+             'recovery': {'title': 'rest',
+                          'interval_duration': int(recover_time_ent.get()),
+                          'color': 'pink',
+                          'hex': 'FF0000'},
+             'paused': {'hex': 'FFFFFF'}}
 
-    active_input = int(active_time_entry.get())
-    delay_input = int(delay_start_entry.get())
-    start_button.config(command=lambda: start_timer(delay_input,
+    t1 = threading.Thread(target=change_lights, args=(phases['paused']['hex'],))
+    t1.start()
+
+    active_input = int(active_time_ent.get())
+    delay_input = int(delay_start_ent.get())
+    start_btn.config(command=lambda: start_timer(delay_input,
                                                     0,
                                                     'active',
                                                     active_input,
                                                     phases))
-    root.columnconfigure(0, weight=1, minsize=95)
-    root.columnconfigure(1, weight=1, minsize=95)
-    root.columnconfigure(2, weight=1, minsize=95)
+    root.columnconfigure(0, weight=1, minsize=400)
+    root.columnconfigure(1, weight=1, minsize=400)
+    root.columnconfigure(2, weight=1, minsize=400)
 
     root.rowconfigure(0, weight=1, minsize=30)
     root.rowconfigure(1, weight=1, minsize=80)
     root.rowconfigure(2, weight=1, minsize=110)
 
-    # previous_screen_button.place(x=10, y=10)
-    previous_screen_button.grid(row=0, column=0, sticky="nw")
-
-    # interval_type_lbl.pack(pady=20)
+    previous_screen_btn.grid(row=0, column=0, sticky="nw")
     interval_type_lbl.grid(row=0, column=1)
-    # interval_countdown_lbl.pack(pady=25)
-    interval_countdown_lbl.grid(row=1, column=1, sticky="nsew")
-
-    # pause_button.place(x=299, y=600)#100
-    pause_button.grid(row=2, column=0, sticky="ne")
-    # start_button.place(x=524, y=587)#325
-    start_button.grid(row=2, column=1, sticky="n", pady=5)
-    # reset_button.place(x=754, y=600)#555
-    reset_button.grid(row=2, column=2, sticky="nw")
-
-    # elapsed_time_lbl.pack(side=BOTTOM)
+    interval_countdown_lbl.grid(row=1, column=1, sticky="n")
+    pause_btn.grid(row=2, column=0, sticky="ne")
+    start_btn.grid(row=2, column=1, sticky="n", pady=5)
+    reset_btn.grid(row=2, column=2, sticky="nw")
     elapsed_time_lbl.grid(row=2, column=1, sticky="s")
+
+    # previous_screen_btn.place(x=10, y=10)
+    # interval_type_lbl.pack(pady=20)
+    # interval_countdown_lbl.pack(pady=25)
+    # pause_btn.place(x=299, y=600)#100
+    # start_btn.place(x=524, y=587)#325
+    # reset_btn.place(x=754, y=600)#555
+    # elapsed_time_lbl.pack(side=BOTTOM)
 
     root.update()
 
@@ -141,27 +163,30 @@ def pause_timer(seconds_passed, interval_type, interval_time, phases):
     """pauses the timer and sets the start button to start where left off"""
     global timer_paused
     timer_paused = True
-    start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
-                                                    seconds_passed,
-                                                    interval_type,
-                                                    interval_time,
-                                                    phases))
+    t1 = threading.Thread(target=change_lights, args=(phases['paused']['hex'],))
+    t1.start()
+    start_btn.config(command=lambda: start_timer(int(delay_start_ent.get()),
+                                                 seconds_passed,
+                                                 interval_type,
+                                                 interval_time,
+                                                 phases))
+
     root.update()
 
 
 def reset_timer(phases):
     """resets the timer screen"""
     setup_timer_screen()
-    pause_timer(0, 'active', int(active_time_entry.get()), phases)
+    pause_timer(0, 'active', int(active_time_ent.get()), phases)
 
 
 def update_timer(seconds_passed, interval_type, interval_time, phases):
     """changes formatting and increased elapsed time and decreases interval countdown"""
     # new_interval = False
-    pause_button.config(command=lambda: pause_timer(seconds_passed,
-                                                    interval_type,
-                                                    interval_time,
-                                                    phases))
+    pause_btn.config(command=lambda: pause_timer(seconds_passed,
+                                                 interval_type,
+                                                 interval_time,
+                                                 phases))
 
     if seconds_passed < 480 and not timer_paused:
         # seconds_passed//60, secondvalue = seconds_passed%60)
@@ -210,26 +235,26 @@ root.title("Exercise Timer")
 ##### INPUT SCREEN WIDGETS #####
 # Declaration of variables
 active_time = StringVar()
-recovery_time = StringVar()
+recover_time = StringVar()
 delay_start = StringVar()
 
 # setting the default value as 0
 active_time.set("00")
-recovery_time.set("00")
+recover_time.set("00")
 delay_start.set("10")
 
 # entry box labels
 active_lbl = Label(root, text="active", justify='center', font=("Arial", 60))
-recovery_lbl = Label(root, text="recovery", justify='center', font=("Arial", 60))
+recover_lbl = Label(root, text="recovery", justify='center', font=("Arial", 60))
 delay_lbl = Label(root, text="delay start", justify='center', font=("Arial", 30))
 
 # interval time entry boxes
-active_time_entry = Entry(root, width=2, font=("Arial", 70, ""),
-                          textvariable=active_time, justify='center')
-recovery_time_entry = Entry(root, width=2, font=("Arial", 70, ""),
-                            textvariable=recovery_time, justify='center')
-delay_start_entry = Entry(root, width=2, font=("Arial", 35, ""),
-                            textvariable=delay_start, justify='center')
+active_time_ent = Entry(root, width=2, font=("Arial", 70, ""),
+                        textvariable=active_time, justify='center')
+recover_time_ent = Entry(root, width=2, font=("Arial", 70, ""),
+                         textvariable=recover_time, justify='center')
+delay_start_ent = Entry(root, width=2, font=("Arial", 35, ""),
+                        textvariable=delay_start, justify='center')
 
 # button to set the interval times and changes to/sets up the timer screen
 setup_btn = Button(root, text='Set Up Timer', bd='5',
@@ -247,29 +272,29 @@ delay_timer_cntdown_lbl = Label(root, text="", justify='center', font=("Arial", 
 elapsed_time_lbl = Label(root, text="00:00", justify='center', font=("Arial", 50))
 
 # buttons
-start_button = Button(root, text='start', bd='20',
-                      command=lambda: start_timer(int(delay_start_entry.get()),
-                                                  0,
-                                                  'active',
-                                                  int(active_time_entry.get()),
-                                                  phases),
-                      font=("Arial", 70), bg='grey')
+start_btn = Button(root, text='start', bd='20',
+                   command=lambda: start_timer(int(delay_start_ent.get()),
+                                               0,
+                                               'active',
+                                               int(active_time_ent.get()),
+                                               phases),
+                   font=("Arial", 70), bg='grey')
 
-pause_button = Button(root, text='pause', bd='7',
-                      command=lambda: pause_timer(0,
-                                                  'active',
-                                                  int(active_time_entry.get()),
-                                                  phases),
-                      font=("Arial", 50),
-                      bg='grey')
+pause_btn = Button(root, text='pause', bd='7',
+                   command=lambda: pause_timer(0,
+                                               'active',
+                                               int(active_time_ent.get()),
+                                               phases),
+                   font=("Arial", 50),
+                   bg='grey')
 
-reset_button = Button(root, text='reset', bd='7', command=lambda: reset_timer(phases),
-                      font=("Arial", 50),
-                      bg='grey')
+reset_btn = Button(root, text='reset', bd='7', command=lambda: reset_timer(phases),
+                   font=("Arial", 50),
+                   bg='grey')
 
-previous_screen_button = Button(root, text='previous screen', bd='5',
-                                command=setup_input_screen,
-                                font=("Arial", 20))
+previous_screen_btn = Button(root, text='previous screen', bd='5',
+                             command=setup_input_screen,
+                             font=("Arial", 20))
 
 # infinite loop which is required to
 # run tkinter program infinitely
