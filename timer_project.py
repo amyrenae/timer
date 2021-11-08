@@ -1,4 +1,20 @@
 from tkinter import *
+# from '/Users/amyveggeberg/Desktop/super/loginz.py' import wyze
+from wyze_sdk import Client
+from wyze_sdk.errors import WyzeApiError
+import sys
+
+sys.path.insert(0, '/Users/amyveggeberg/Desktop/super/')
+from loginz import wyze
+
+client = Client(email=wyze['email'], password=wyze['password'])
+
+try:
+    response = client.devices_list()
+except WyzeApiError as e:
+    # You will get a WyzeApiError is the request failed
+    print(f"Got an error: {e}")
+
 
 def setup_input_screen():
     #clear previous buttons (if reverting)
@@ -91,7 +107,7 @@ def start_timer(delay, seconds_passed, interval, interval_time):
         delay_timer_cntdown_lbl.place_forget()
         root.update()
         timer_paused = False
-        update_timer(seconds_passed, interval, interval_time)
+        update_timer(seconds_passed, interval, interval_time, True)
 
 
 def pause_timer(seconds_passed, interval, interval_time):
@@ -111,22 +127,28 @@ def reset_timer():
     pause_timer(0, 'active', int(active_time_entry.get()))
 
 
-def update_timer(seconds_passed, interval, interval_time):
+def update_timer(seconds_passed, interval, interval_time, new_interval):
     """changes formatting and increased elapsed time and decreases interval countdown"""
+    # new_interval = False
     pause_button.config(command=lambda: pause_timer(seconds_passed,
                                                     interval, interval_time))
     phase = {'active': {'title': 'go!',
                         'interval_duration': int(active_time_entry.get()),
-                        'color': 'green'},
+                        'color': 'green',
+                        'hex': '00FF00'},
              'recovery': {'title': 'rest',
                           'interval_duration': int(recovery_time_entry.get()),
-                          'color': 'pink'}}
+                          'color': 'pink',
+                          'hex': 'FF0000'}}
     #switches to the other interval at the end of the interval duration
     if interval_time < 1:
+        new_interval = True
         if interval == 'active':
             interval = 'recovery'
         else:
             interval = 'active'
+
+
         interval_time = phase[interval]['interval_duration']
 
     if seconds_passed < 480 and not timer_paused:
@@ -146,7 +168,16 @@ def update_timer(seconds_passed, interval, interval_time):
         root.config(bg=phase[interval]['color'])
 
         root.update()
-        root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1)
+
+        if new_interval:
+            change_lights(phase[interval]['hex'])
+            root.after(650, update_timer, seconds_passed+1, interval, interval_time-1, False)
+        else:
+            root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
+
+def change_lights(hex_a):
+        bulb = response[4]
+        client.bulbs.set_color(device_mac=bulb.mac, device_model=bulb.product.model, color=hex_a)
 
 
 timer_paused = False
