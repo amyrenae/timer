@@ -1,8 +1,8 @@
 from tkinter import *
-# from '/Users/amyveggeberg/Desktop/super/loginz.py' import wyze
 from wyze_sdk import Client
 from wyze_sdk.errors import WyzeApiError
 import sys
+import threading
 
 sys.path.insert(0, '/Users/amyveggeberg/Desktop/super/')
 from loginz import wyze
@@ -12,7 +12,6 @@ client = Client(email=wyze['email'], password=wyze['password'])
 try:
     response = client.devices_list()
 except WyzeApiError as e:
-    # You will get a WyzeApiError is the request failed
     print(f"Got an error: {e}")
 
 
@@ -92,7 +91,7 @@ def setup_timer_screen():
     root.update()
 
 
-def start_timer(delay, seconds_passed, interval, interval_time):
+def start_timer(delay, seconds_passed, interval_type, interval_time):
     """sets timer_paused to False and runs update_timer function"""
     global timer_paused
 
@@ -102,21 +101,21 @@ def start_timer(delay, seconds_passed, interval, interval_time):
         delay_timer_cntdown_lbl.place(x=750, y=200)
         root.update()
         root.after(1000, start_timer, delay-1,
-                   seconds_passed, interval, interval_time)
+                   seconds_passed, interval_type, interval_time)
     else:
         delay_timer_cntdown_lbl.place_forget()
         root.update()
         timer_paused = False
-        update_timer(seconds_passed, interval, interval_time, True)
+        update_timer(seconds_passed, interval_type, interval_time, True)
 
 
-def pause_timer(seconds_passed, interval, interval_time):
+def pause_timer(seconds_passed, interval_type, interval_time):
     """pauses the timer and sets the start button to start where left off"""
     global timer_paused
     timer_paused = True
     start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
                                                     seconds_passed,
-                                                    interval,
+                                                    interval_type,
                                                     interval_time))
     root.update()
 
@@ -147,11 +146,12 @@ def update_timer(seconds_passed, interval, interval_time, new_interval):
             interval = 'recovery'
         else:
             interval = 'active'
-
-
         interval_time = phase[interval]['interval_duration']
 
     if seconds_passed < 480 and not timer_paused:
+        if new_interval:
+            t1 = threading.Thread(target=change_lights, args=(phase[interval]['hex'],))
+            t1.start()
         # seconds_passed//60, secondvalue = seconds_passed%60)
         mins, secs = divmod(seconds_passed, 60)
         display = "{minutes}:{seconds}".format(minutes="{:0>2}".format(mins),
@@ -167,13 +167,18 @@ def update_timer(seconds_passed, interval, interval_time, new_interval):
 
         root.config(bg=phase[interval]['color'])
 
-        root.update()
 
-        if new_interval:
-            change_lights(phase[interval]['hex'])
-            root.after(650, update_timer, seconds_passed+1, interval, interval_time-1, False)
-        else:
-            root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
+
+        root.update()
+        # root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
+
+        # if new_interval:
+            # change_lights(phase[interval]['hex'])
+
+        root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
+            # t1.join()
+        # else:
+            # root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
 
 def change_lights(hex_a):
         bulb = response[4]
@@ -186,7 +191,6 @@ timer_paused = False
 root = Tk()
 root.geometry("1200x800")
 root.title("Exercise Timer")
-
 
 ##### INPUT SCREEN WIDGETS #####
 # Declaration of variables
@@ -251,7 +255,5 @@ previous_screen_button = Button(root, text='previous screen', bd='5',
 # infinite loop which is required to
 # run tkinter program infinitely
 # until an interrupt occurs
-
-
 setup_input_screen()
 root.mainloop()
