@@ -15,15 +15,14 @@ except WyzeApiError as e:
     print(f"Got an error: {e}")
 
 
-
-
 def setup_input_screen():
     #clear previous buttons (if reverting)
     global timer_paused
     timer_paused = True
 
     # disappear all countdowntimer screen widgets
-    previous_screen_button.place_forget()
+    # previous_screen_button.place_forget()
+    previous_screen_button.grid_forget()
     interval_type_lbl.pack_forget()
     interval_countdown_lbl.pack_forget()
     delay_timer_cntdown_lbl.place_forget()
@@ -89,17 +88,31 @@ def setup_timer_screen():
                                                     'active',
                                                     active_input,
                                                     phases))
+    root.columnconfigure(0, weight=1, minsize=95)
+    root.columnconfigure(1, weight=1, minsize=95)
+    root.columnconfigure(2, weight=1, minsize=95)
 
-    previous_screen_button.place(x=10, y=10)
+    root.rowconfigure(0, weight=1, minsize=30)
+    root.rowconfigure(1, weight=1, minsize=80)
+    root.rowconfigure(2, weight=1, minsize=110)
 
-    interval_type_lbl.pack(pady=20)
-    interval_countdown_lbl.pack(pady=25)
+    # previous_screen_button.place(x=10, y=10)
+    previous_screen_button.grid(row=0, column=0, sticky="nw")
 
-    pause_button.place(x=299, y=600)#100
-    start_button.place(x=524, y=587)#325
-    reset_button.place(x=754, y=600)#555
+    # interval_type_lbl.pack(pady=20)
+    interval_type_lbl.grid(row=0, column=1)
+    # interval_countdown_lbl.pack(pady=25)
+    interval_countdown_lbl.grid(row=1, column=1, sticky="nsew")
 
-    elapsed_time_lbl.pack(side=BOTTOM)
+    # pause_button.place(x=299, y=600)#100
+    pause_button.grid(row=2, column=0, sticky="ne")
+    # start_button.place(x=524, y=587)#325
+    start_button.grid(row=2, column=1, sticky="n", pady=5)
+    # reset_button.place(x=754, y=600)#555
+    reset_button.grid(row=2, column=2, sticky="nw")
+
+    # elapsed_time_lbl.pack(side=BOTTOM)
+    elapsed_time_lbl.grid(row=2, column=1, sticky="s")
 
     root.update()
 
@@ -149,15 +162,6 @@ def update_timer(seconds_passed, interval_type, interval_time, phases):
                                                     interval_type,
                                                     interval_time,
                                                     phases))
-    # phases = {'active': {'title': 'go!',
-             #            'interval_duration': int(active_time_entry.get()),
-             #            'color': 'green',
-             #            'hex': '00FF00'},
-             # 'recovery': {'title': 'rest',
-             #              'interval_duration': int(recovery_time_entry.get()),
-             #              'color': 'pink',
-             #              'hex': 'FF0000'}}
-
 
     if seconds_passed < 480 and not timer_paused:
         # seconds_passed//60, secondvalue = seconds_passed%60)
@@ -178,7 +182,6 @@ def update_timer(seconds_passed, interval_type, interval_time, phases):
 
         seconds_passed += 1
         interval_time -= 1
-
     #switches to the other interval at the end of the interval duration
         if interval_time < 1:
             if interval_type == 'active':
