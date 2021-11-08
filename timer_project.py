@@ -15,6 +15,8 @@ except WyzeApiError as e:
     print(f"Got an error: {e}")
 
 
+
+
 def setup_input_screen():
     #clear previous buttons (if reverting)
     global timer_paused
@@ -71,11 +73,22 @@ def setup_timer_screen():
     interval_countdown_lbl.config(text="0", bg="white")
     elapsed_time_lbl.config(text="00:00", bg="white")
 
+    phases = {'active': {'title': 'go!',
+                    'interval_duration': int(active_time_entry.get()),
+                    'color': 'green',
+                    'hex': '00FF00'},
+         'recovery': {'title': 'rest',
+                      'interval_duration': int(recovery_time_entry.get()),
+                      'color': 'pink',
+                      'hex': 'FF0000'}}
+
     active_input = int(active_time_entry.get())
-    start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
+    delay_input = int(delay_start_entry.get())
+    start_button.config(command=lambda: start_timer(delay_input,
                                                     0,
                                                     'active',
-                                                    active_input))
+                                                    active_input,
+                                                    phases))
 
     previous_screen_button.place(x=10, y=10)
 
@@ -91,7 +104,7 @@ def setup_timer_screen():
     root.update()
 
 
-def start_timer(delay, seconds_passed, interval_type, interval_time):
+def start_timer(delay, seconds_passed, interval_type, interval_time, phases):
     """sets timer_paused to False and runs update_timer function"""
     global timer_paused
 
@@ -101,84 +114,83 @@ def start_timer(delay, seconds_passed, interval_type, interval_time):
         delay_timer_cntdown_lbl.place(x=750, y=200)
         root.update()
         root.after(1000, start_timer, delay-1,
-                   seconds_passed, interval_type, interval_time)
+                   seconds_passed, interval_type, interval_time, phases)
     else:
         delay_timer_cntdown_lbl.place_forget()
         root.update()
         timer_paused = False
-        update_timer(seconds_passed, interval_type, interval_time, True)
+        t1 = threading.Thread(target=change_lights, args=(phases[interval_type]['hex'],))
+        t1.start()
+        update_timer(seconds_passed, interval_type, interval_time, phases)
 
 
-def pause_timer(seconds_passed, interval_type, interval_time):
+def pause_timer(seconds_passed, interval_type, interval_time, phases):
     """pauses the timer and sets the start button to start where left off"""
     global timer_paused
     timer_paused = True
     start_button.config(command=lambda: start_timer(int(delay_start_entry.get()),
                                                     seconds_passed,
                                                     interval_type,
-                                                    interval_time))
+                                                    interval_time,
+                                                    phases))
     root.update()
 
 
-def reset_timer():
+def reset_timer(phases):
     """resets the timer screen"""
     setup_timer_screen()
-    pause_timer(0, 'active', int(active_time_entry.get()))
+    pause_timer(0, 'active', int(active_time_entry.get()), phases)
 
 
-def update_timer(seconds_passed, interval, interval_time, new_interval):
+def update_timer(seconds_passed, interval_type, interval_time, phases):
     """changes formatting and increased elapsed time and decreases interval countdown"""
     # new_interval = False
     pause_button.config(command=lambda: pause_timer(seconds_passed,
-                                                    interval, interval_time))
-    phase = {'active': {'title': 'go!',
-                        'interval_duration': int(active_time_entry.get()),
-                        'color': 'green',
-                        'hex': '00FF00'},
-             'recovery': {'title': 'rest',
-                          'interval_duration': int(recovery_time_entry.get()),
-                          'color': 'pink',
-                          'hex': 'FF0000'}}
-    #switches to the other interval at the end of the interval duration
-    if interval_time < 1:
-        new_interval = True
-        if interval == 'active':
-            interval = 'recovery'
-        else:
-            interval = 'active'
-        interval_time = phase[interval]['interval_duration']
+                                                    interval_type,
+                                                    interval_time,
+                                                    phases))
+    # phases = {'active': {'title': 'go!',
+             #            'interval_duration': int(active_time_entry.get()),
+             #            'color': 'green',
+             #            'hex': '00FF00'},
+             # 'recovery': {'title': 'rest',
+             #              'interval_duration': int(recovery_time_entry.get()),
+             #              'color': 'pink',
+             #              'hex': 'FF0000'}}
+
 
     if seconds_passed < 480 and not timer_paused:
-        if new_interval:
-            t1 = threading.Thread(target=change_lights, args=(phase[interval]['hex'],))
-            t1.start()
         # seconds_passed//60, secondvalue = seconds_passed%60)
         mins, secs = divmod(seconds_passed, 60)
         display = "{minutes}:{seconds}".format(minutes="{:0>2}".format(mins),
                                                seconds="{:0>2}".format(secs))
         # changes the background color of the window and the widgets
         # based on the interval type
-        interval_type_lbl.config(text=phase[interval]['title'],
-                                 bg=phase[interval]['color'])
+        interval_type_lbl.config(text=phases[interval_type]['title'],
+                                 bg=phases[interval_type]['color'])
         interval_countdown_lbl.config(text=interval_time,
-                                      bg=phase[interval]['color'])
+                                      bg=phases[interval_type]['color'])
         elapsed_time_lbl.config(text=display,
-                                bg=phase[interval]['color'])
+                                bg=phases[interval_type]['color'])
 
-        root.config(bg=phase[interval]['color'])
-
-
-
+        root.config(bg=phases[interval_type]['color'])
         root.update()
-        # root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
 
-        # if new_interval:
-            # change_lights(phase[interval]['hex'])
+        seconds_passed += 1
+        interval_time -= 1
 
-        root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
-            # t1.join()
-        # else:
-            # root.after(1000, update_timer, seconds_passed+1, interval, interval_time-1, False)
+    #switches to the other interval at the end of the interval duration
+        if interval_time < 1:
+            if interval_type == 'active':
+                interval_type = 'recovery'
+            else:
+                interval_type = 'active'
+            interval_time = phases[interval_type]['interval_duration']
+            t1 = threading.Thread(target=change_lights, args=(phases[interval_type]['hex'],))
+            t1.start()
+
+        root.after(1000, update_timer, seconds_passed, interval_type, interval_time, phases)
+
 
 def change_lights(hex_a):
         bulb = response[4]
@@ -236,15 +248,19 @@ start_button = Button(root, text='start', bd='20',
                       command=lambda: start_timer(int(delay_start_entry.get()),
                                                   0,
                                                   'active',
-                                                  int(active_time_entry.get())),
+                                                  int(active_time_entry.get()),
+                                                  phases),
                       font=("Arial", 70), bg='grey')
 
 pause_button = Button(root, text='pause', bd='7',
-                      command=lambda: pause_timer(0, 'active', int(active_time_entry.get())),
+                      command=lambda: pause_timer(0,
+                                                  'active',
+                                                  int(active_time_entry.get()),
+                                                  phases),
                       font=("Arial", 50),
                       bg='grey')
 
-reset_button = Button(root, text='reset', bd='7', command=reset_timer,
+reset_button = Button(root, text='reset', bd='7', command=lambda: reset_timer(phases),
                       font=("Arial", 50),
                       bg='grey')
 
